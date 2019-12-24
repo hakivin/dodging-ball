@@ -5,6 +5,7 @@ int sec;
 void setup(){
   size(640,920);
   player1 = new Player();
+  background(0);
   delay(1500);
 }
 
