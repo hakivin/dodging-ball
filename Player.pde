@@ -3,17 +3,22 @@ class Player{
   int x;
   int y;
   int movspd;
+  PImage jet;
   
-  Player(){
-    radius = 20;
+  Player(PImage jet){
+    radius = 25;
     x = 640/2;
-    y = 920-radius*2;
+    y = 920-radius*3;
     movspd = 5;
+    this.jet = jet;
   }
   
   void display(){
     fill(255);
-    circle(x,y,radius*2);
+    //circle(x,y,radius*2);
+    imageMode(CENTER);
+    image(jet,x,y);
+    //imageMode(CORNER);
   }
   
   void moveLeft(){
@@ -39,7 +44,7 @@ class Player{
   boolean hit(ArrayList<Meteor> obs){
     for(Meteor ob : obs){
       float distance = dist(x,y,ob.x,ob.y);
-      if (distance <= radius + ob.w/2) {
+      if (distance <= radius + ob.w/1.5) {
           return true;
       }
     }
@@ -47,22 +52,24 @@ class Player{
   }
   
   boolean hitWall(ArrayList<Wall> walls){
-    int testX = 0;
-    int testY = 0;
     for(Wall wall : walls){
       if(wall.y <= wall.wid || wall.y > y)
         continue;
-      if (x < wall.x)         testX = wall.x;        // left edge
-      else if (x > wall.x+wall.len) testX = wall.x+wall.len;     // right edge
-
-      if (y < wall.y)         testY = wall.y;        // top edge
-      else if (y > wall.y+wall.wid) testY = wall.y+wall.wid;     // bottom edge
-      
-      float dist = dist(x,y,testX,testY);
-      float dist2 = dist(x,y,testX+wall.dist,testY);
-      
-      if(dist <= radius || dist2 <= radius){
+      if((y-radius <= wall.y+wall.wid && y-radius >= wall.y) && (x <= wall.len || x >= wall.len+wall.dist)){
         return true;
+      }
+    }
+    return false;
+  }
+  
+  boolean hitBoss(BigBall bb){
+    if(dist(x,y,bb.x,bb.y) <= radius+bb.radius/2){
+      return true;
+    }
+    for(BigBall.Missile ms : bb.miss){
+      float distance = dist(x,y,ms.x,ms.y);
+      if (distance <= radius + ms.w/2) {
+          return true;
       }
     }
     return false;
