@@ -67,7 +67,7 @@ class BigBall{
   boolean right;
   ArrayList<Missile> miss;
   int missLaunched;
-  boolean coming;
+  boolean coming, done, retreat;
   PImage bb;
   int playerx;
   int playery;
@@ -79,9 +79,11 @@ class BigBall{
     this.speed = 2;
     this.bb = bb;
     this.right = true;
+    this.done = false;
     this.playerx = 940;
     this.playery = 640/2;
-    coming = false;
+    this.coming = false;
+    this.retreat = false;
     miss = new ArrayList();
     for(int i = 0; i < 200; i++){
       miss.add(new Missile(x,200));
@@ -133,7 +135,10 @@ class BigBall{
       for(int i = 1; i < miss.size(); i++){
         if(miss.get(i-1).y > 250){
           miss.get(i).display();
-          miss.get(i).launch(5);
+          boolean state = miss.get(i).launch(5);
+          if(i == miss.size()-2 && !state){
+            done = true;
+          }
         }
       }
     }
@@ -160,21 +165,30 @@ class BigBall{
   }
   
   void move(){
-    if(y <= 50)
-      y+=speed;
+    if(done){
+      if(y >= -200)
+        y-=speed;
+      else{
+        retreat = true;
+      }
+    }
     else{
-      coming = true;
-      if(right){
-        if(x <= 150){
-          //x+= speed;
+      if(y <= 50)
+        y+=speed;
+      else{
+        coming = true;
+        if(right){
+          if(x <= 150){
+            //x+= speed;
+          } else {
+            right = false;
+          }
         } else {
-          right = false;
-        }
-      } else {
-        if(x >= -150){
-          //x-= speed;
-        } else {
-          right =true;
+          if(x >= -150){
+            //x-= speed;
+          } else {
+            right =true;
+          }
         }
       }
     }

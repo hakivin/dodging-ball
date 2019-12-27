@@ -68,7 +68,7 @@ class Player{
     }
     for(BigBall.Missile ms : bb.miss){
       float distance = dist(x,y,ms.x,ms.y);
-      if (distance <= radius + ms.w/2) {
+      if (distance <= radius + ms.h/2) {
           return true;
       }
     }
