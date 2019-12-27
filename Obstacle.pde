@@ -62,7 +62,7 @@ class Wall{
 }
 
 class BigBall{
-  
+  int health;
   int x, y, radius, speed;
   boolean right;
   ArrayList<Missile> miss;
@@ -71,6 +71,7 @@ class BigBall{
   PImage bb;
   int playerx;
   int playery;
+
   
   BigBall(PImage bb){
     this.x = 640/2;
@@ -78,6 +79,7 @@ class BigBall{
     this.y = -150;
     this.speed = 2;
     this.bb = bb;
+    this.health = 100;
     this.right = true;
     this.done = false;
     this.playerx = 940;
@@ -85,12 +87,22 @@ class BigBall{
     this.coming = false;
     this.retreat = false;
     miss = new ArrayList();
-    for(int i = 0; i < 200; i++){
+    for(int i = 0; i < 1000; i++){
       miss.add(new Missile(x,200));
     }
     missLaunched = 0;
   }
   
+  void hit(){
+    System.out.println(health);
+    for(PlayerMissile pm : player1.miss){
+      if(pm.y >= 96 && pm.y <= 104 && pm.x >= 640/2 - 200 && pm.x <= 640/2 + 200){
+        pm.y = -500;
+        health -= 0.05;
+      }
+    }
+  }
+
   class Missile{
     float x, y;
     float w, h;
@@ -108,6 +120,9 @@ class BigBall{
       fill(255,191,0);
       ellipse(x-20,y,w,h);
       ellipse(x,y,w,h);
+      hit();
+      if(health <= 0)
+        done = true;
     }
     
     boolean launch(int speed){
@@ -129,7 +144,7 @@ class BigBall{
   }
   
   void launchMissile(){
-    if(coming){
+    if(coming && !done){
       miss.get(0).display();
       miss.get(0).launch(5);
       for(int i = 1; i < miss.size(); i++){
@@ -142,26 +157,6 @@ class BigBall{
         }
       }
     }
-    //if(coming){
-    //  miss.add(new Missile(x+640/2,200));
-    //  miss.get(0).display();
-    //  miss.get(0).launch(5);
-    //  for(int i = 1; i < miss.size(); i++){
-    //      if(miss.get(i-1).y > 300){
-    //        //miss.add(new Missile(x+640/2,200));
-    //        miss.get(i).display();
-    //        miss.get(i).launch(5);
-    //      }
-    //      if(i == miss.size()-1 && miss.get(i).y > 300){
-    //        miss.add(new Missile(-x+640/2,200));
-    //        miss.add(new Missile(20-x+640/2,200));
-    //        miss.get(i+1).display();
-    //        miss.get(i+1).launch(5);
-    //        miss.get(i+2).display();
-    //        miss.get(i+2).launch(5);
-    //      }
-    //  }
-    //}
   }
   
   void move(){

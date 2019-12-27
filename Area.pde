@@ -5,6 +5,7 @@ class Area{
   int size;
   int wave;
   PImage img, bg, aster, bigball;
+  boolean clear;
  
   int x = 1;
   int y = 1;
@@ -19,11 +20,17 @@ class Area{
     this.aster = aster;
     this.size = size;
     this.bigball = bigball;
+    this.img = img;
+    createMeteor();
+    wave = 1;
+    display2();
+    clear = false;
+  }
+  
+  void createMeteor(){
     for(int i = 0; i <= size; i++){
       met.add(new Meteor(random(640),-20,img));
     }
-    wave = 3;
-    display2();
   }
   
   int checkWave(){
@@ -38,7 +45,7 @@ class Area{
         right = false;
     } else {
       x--;
-      if(x <= -300)
+      if(x <= -1200)
         right = true;
     }
     if(up){
@@ -68,7 +75,9 @@ class Area{
       launchWalls();
     } else if(wave == 3){
        launchBb();
+       createMeteor();
     }
+    clear = bb.retreat;
   }
   
   void strafe(){
@@ -107,7 +116,7 @@ class Area{
     }
   
   void display2(){
-    for(int i = 0; i <= size-40; i++){
+    for(int i = 0; i <= size-20; i++){
       walls.add(new Wall(0,0,aster));
     }
   }

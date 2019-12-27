@@ -1,8 +1,13 @@
+import gifAnimation.*;
+
 boolean gameover= false, right = false, left = false, up = false, down = false, d = false, a = false, w = false, s = false;
 Area area;
 Player player1;
 int sec;
 PImage jet;
+PImage evolvedjet, bgg;
+int timer;
+boolean isEvolved;
 void setup(){
   size(640,920);
   PImage met = loadImage("meteor.png");
@@ -11,14 +16,22 @@ void setup(){
   PImage bg = loadImage("spacebg3.jpg");
   PImage aster = loadImage("asteroid.png");
   PImage bigball = loadImage("bigball.png");
+  evolvedjet = loadImage("spaceship.png");
+  evolvedjet.resize(50,90);
   aster.resize(640,80);
   //bg.resize(640,920);
   area = new Area(50,bg,met,aster,bigball);
+  Gif myAnimation = new Gif(this, "Kamekameha.gif");
+  myAnimation.play();
   jet = loadImage("jet.png");
   jet.resize(50,90);
+  bgg = loadImage("bg2.jpg");
   player1 = new Player(jet);
+  timer = -5;
+  isEvolved = false;
   background(0);
   delay(1500);
+  //area.clear = true;
 }
 
 void draw(){
@@ -29,21 +42,27 @@ void draw(){
     redraw();
   }
   else{
-    area.display();  
-    player1.display();
-    area.bb.playerx = player1.x;
-    area.bb.playery = player1.y;
-    if(area.checkWave() == 1){
-      if(player1.hit(area.met))
-        gameover = true;
-    } else if(area.checkWave() == 2){
-      if(player1.hitWall(area.walls))
-        gameover = true;
-    } else if(area.checkWave() == 3){
-      if(player1.hitBoss(area.bb)){
-        gameover = true;
-      }
+      if(!area.clear){
+      area.display();  
+      area.bb.playerx = player1.x;
+      area.bb.playery = player1.y;
+      if(area.checkWave() == 1){
+        if(player1.hit(area.met))
+          gameover = true;
+      } else if(area.checkWave() == 2){
+        if(player1.hitWall(area.walls))
+          gameover = true;
+      } else if(area.checkWave() == 3){
+        player1.jet = evolvedjet;
+        isEvolved = true;
+        if(player1.hitBoss(area.bb)){
+          gameover = true;
+        }
+      } 
+    } else {
+      changeStage();
     }
+    player1.display();
     if (left==true)
       {
         player1.moveLeft();
@@ -61,6 +80,15 @@ void draw(){
         player1.moveDown();
       }
     }
+}
+
+void changeStage(){
+  area.wave = 0;
+  area.display();
+  fill(255);
+  textSize(64);
+  textAlign(CENTER);
+  text("You Win!",640/2,920/2);
 }
 
 void keyPressed()
@@ -96,6 +124,9 @@ void keyPressed()
   if (key == 's' )
   {
     s=true;
+  }
+  if (key == ' ' && isEvolved){
+    player1.shoot();
   }
 }
 

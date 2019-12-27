@@ -4,6 +4,7 @@ class Player{
   int y;
   int movspd;
   PImage jet;
+  ArrayList<PlayerMissile> miss;
   
   Player(PImage jet){
     radius = 25;
@@ -11,6 +12,12 @@ class Player{
     y = 920-radius*3;
     movspd = 5;
     this.jet = jet;
+    this.miss = new ArrayList();
+  }
+  
+  void shoot(){
+    PlayerMissile missile = new PlayerMissile(x,y);
+    miss.add(missile);
   }
   
   void display(){
@@ -19,6 +26,13 @@ class Player{
     imageMode(CENTER);
     image(jet,x,y);
     //imageMode(CORNER);
+    for(int i = 0; i < miss.size(); i++){
+      miss.get(i).display();
+      boolean state = miss.get(i).launch(8);
+      if(!state){
+        miss.remove(i);
+      }
+    }
   }
   
   void moveLeft(){
@@ -32,12 +46,12 @@ class Player{
   }
   
   void moveUp(){
-    if(y >= radius)
+    if(y >= 50)
       y-=movspd;
   }
   
   void moveDown(){
-    if(y <= 920-radius-10)
+    if(y <= 920-50)
       y+=movspd;
   }
   
@@ -68,7 +82,7 @@ class Player{
     }
     for(BigBall.Missile ms : bb.miss){
       float distance = dist(x,y,ms.x,ms.y);
-      if (distance <= radius + ms.h/2) {
+      if (distance <= radius + ms.h/4) {
           return true;
       }
     }
